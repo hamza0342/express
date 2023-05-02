@@ -37,5 +37,9 @@ jobs:
           SSH_HOST: ${{ env.REMOTE_HOST }}
           SSH_USER: ${{ env.REMOTE_USER }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
-      - name: List home directory
-        run: ssh ec2 'ls -la'
+      - name: Deploy
+        run: ssh ec2 "
+          sudo rm -rf /home/ubuntu/web-app-backend-/
+          git clone https://github.com/hamza0342/express.git
+          npm install
+          sudo pm2 start index.js
