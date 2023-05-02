@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/main'
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: rm -rf /home/ubuntu/web-app-backend-/
+      - run: git clone https://github.com/hamza0342/express.git
+      - run: npm install
+      - run: sudo pm2 start index.js
+
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          #switches: -avzr --delete
+          path: ./*
+          remote_path: /home/ubuntu/web-app-backend-/
+          remote_host: 13.127.46.165
+          remote_user: ubuntu
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
