@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 env:
-  REMOTE_HOST: "13.127.46.165"
-  REMOTE_USER: "ubuntu"
+  REMOTE_HOST: 13.127.46.165
+  REMOTE_USER: ubuntu
 
 permissions:
   contents: read
