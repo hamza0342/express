@@ -1,59 +1,41 @@
-# This workflow will build and push a new container image to Amazon ECR,
-# and then will deploy a new task definition to Amazon ECS, when there is a push to the "main" branch.
-#
-# To use this workflow, you will need to complete the following set-up steps:
-#
-# 1. Create an ECR repository to store your images.
-#    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.
-#    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.
-#    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.
-#
-# 2. Create an ECS task definition, an ECS cluster, and an ECS service.
-#    For example, follow the Getting Started guide on the ECS console:
-#      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
-#    Replace the value of the `ECS_SERVICE` environment variable in the workflow below with the name you set for the Amazon ECS service.
-#    Replace the value of the `ECS_CLUSTER` environment variable in the workflow below with the name you set for the cluster.
-#
-# 3. Store your ECS task definition as a JSON file in your repository.
-#    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.
-#    Replace the value of the `ECS_TASK_DEFINITION` environment variable in the workflow below with the path to the JSON file.
-#    Replace the value of the `CONTAINER_NAME` environment variable in the workflow below with the name of the container
-#    in the `containerDefinitions` section of the task definition.
-#
-# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
-#    and best practices on handling the access key credentials.
-
-name: Deploy to Amazon ECS
+name: ssh-into-aws-ec2
 
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-#permissions:
-  #contents: read
+env:
+  REMOTE_HOST: "13.127.46.165"
+  REMOTE_USER: "ubuntu"
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
-  deploy:
-    name: Deploy
+  test:
     runs-on: ubuntu-latest
-    #environment: production
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Deploy Amazon ECS task definition
-      #uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#       with:
-#         task-definition: ${{ steps.task-def.outputs.task-definition }}
-#         service: ${{ env.ECS_SERVICE }}
-#         cluster: ${{ env.ECS_CLUSTER }}
-#         wait-for-service-stability: true
-
-      run: |
-        ssh -o StrictHostKeyChecking=no -i "${{ secrets.SSH_PRIVATE_KEY }}" ubuntu@13.127.46.165
-        sudo rm -rf /home/ubuntu/web-app-backend-/
-        git clone https://github.com/hamza0342/express.git
-        npm install
-        sudo pm2 start index.js
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/github-actions-key
+          chmod 600 ~/.ssh/github-actions-key
+          cat >>~/.ssh/config <<END
+          Host ec2
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/github-actions-key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_HOST: ${{ env.REMOTE_HOST }}
+          SSH_USER: ${{ env.REMOTE_USER }}
+          SSH_KEY: ${{ secrets.!!secrets_key_name }} 
+      - name: List home directory
+        run: ssh ec2 'ls -la'
