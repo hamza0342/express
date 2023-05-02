@@ -42,4 +42,4 @@ jobs:
           sudo rm -rf /home/ubuntu/web-app-backend-/
           git clone https://github.com/hamza0342/express.git
           npm install
-          sudo pm2 start index.js
+          sudo pm2 start index.js"
