@@ -51,7 +51,7 @@ jobs:
 #         cluster: ${{ env.ECS_CLUSTER }}
 #         wait-for-service-stability: true
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@13.127.46.165
+        ssh -o StrictHostKeyChecking=no ubuntu@13.127.46.165
         sudo rm -rf /home/ubuntu/web-app-backend-/
         git clone https://github.com/hamza0342/express.git
         npm install
