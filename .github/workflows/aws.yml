@@ -39,7 +39,7 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
       - name: Deploy
         run: ssh ec2 "
-          sudo whoami
+          id -un
           sudo pm2 stop all
           sudo pm2 delete all
           rm /home/ubuntu/express/
