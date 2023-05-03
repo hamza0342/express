@@ -37,14 +37,14 @@ jobs:
           SSH_HOST: ${{ env.REMOTE_HOST }}
           SSH_USER: ${{ env.REMOTE_USER }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
-      - name: Deploy
-        run: |
-          ssh ec2
-          sudo pm2 stop all
-          sudo pm2 delete all
-          rm -rf /home/ubuntu/express/
-          git clone https://github.com/hamza0342/express.git
-          cd express
-          npm install
-          sudo pm2 start app.js
-        
+      - name: Delete previous running app
+        run: ssh ec2 'sudo pm2 stop all && sudo pm2 delete all'
+      - name: Delete existing repo
+        run: ssh ec2 'rm -rf /home/ubuntu/express/'
+      - name: Clone new repo
+        run: ssh ec2 'git clone https://github.com/hamza0342/express.git'
+      - name: Enter express directory
+        run: ssh ec2 'cd /home/ubuntu/express/ && npm install'
+      - name: Start app
+        run: sudo pm2 start app.js
+          
