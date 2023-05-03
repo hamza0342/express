@@ -39,8 +39,8 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
       - name: Deploy
         run: ssh ec2 "
-          sudo pm2 stop app.js
-          sudo rm -rf /home/ubuntu/express/
+          pm2 stop app.js
+          rm -rf /home/ubuntu/express/
           git clone https://github.com/hamza0342/express.git
           cd express
           npm install
