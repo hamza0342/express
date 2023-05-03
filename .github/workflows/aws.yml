@@ -39,10 +39,10 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
       - name: Deploy
         run: ssh ec2 "
-          sudo pm2 stop all
-          sudo pm2 delete all
+          pm2 stop all
+          pm2 delete all
           rm /home/ubuntu/express/
           git clone https://github.com/hamza0342/express.git
           cd express
           npm install
-          sudo pm2 start app.js"
+          pm2 start app.js"
