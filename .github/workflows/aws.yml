@@ -38,12 +38,13 @@ jobs:
           SSH_USER: ${{ env.REMOTE_USER }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
       - name: Deploy
-        run: ssh ec2 "
-          id -un
+        run: |
+          ssh ec2
           sudo pm2 stop all
           sudo pm2 delete all
-          rm /home/ubuntu/express/
+          rm -rf /home/ubuntu/express/
           git clone https://github.com/hamza0342/express.git
           cd express
           npm install
-          pm2 start app.js"
+          sudo pm2 start app.js
+        
