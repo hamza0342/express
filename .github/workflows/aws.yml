@@ -39,7 +39,8 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
       - name: Deploy
         run: ssh ec2 "
-          pm2 stop 0
+          pm2 stop all
+          pm2 delete all
           rm /home/ubuntu/express/
           git clone https://github.com/hamza0342/express.git
           cd express
