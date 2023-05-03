@@ -40,7 +40,7 @@ jobs:
       - name: Deploy
         run: ssh ec2 "
           pm2 stop app.js
-          rm -rf /home/ubuntu/express/
+          rm /home/ubuntu/express/
           git clone https://github.com/hamza0342/express.git
           cd express
           npm install
